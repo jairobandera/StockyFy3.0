@@ -8,9 +8,9 @@ import { initWebSocket } from './src/core/ws.js';
 async function main() {
   try {
     await testConnection();
-    console.log(`✔ Conexion a MySQL "${config.db.database}" establecida.`);
+    console.log(`Conexion a MySQL "${config.db.database}" establecida.`);
   } catch (err) {
-    console.error('✖ No se pudo conectar a MySQL:', err.message);
+    console.error('No se pudo conectar a MySQL:', err.message);
     console.error('  Revisa el archivo .env y ejecuta "npm run db:init".');
   }
 
@@ -27,7 +27,7 @@ async function main() {
   initWebSocket(server, '/ws');
 
   server.listen(config.port, () => {
-    console.log(`\n🚀 Stockify 2.0 backend escuchando en http://localhost:${config.port}`);
+    console.log(`\nStockify 2.0 backend escuchando en http://localhost:${config.port}`);
     console.log(`   API:       http://localhost:${config.port}${config.apiBase}`);
     console.log(`   WebSocket: ws://localhost:${config.port}/ws`);
     if (config.serveFrontend) {

@@ -34,7 +34,7 @@ async function main() {
   await seed(root);
 
   await root.end();
-  console.log('\n✅ Base de datos lista.');
+  console.log('\nBase de datos lista.');
   console.log('   Usuarios de prueba (contrasenia = "12345"):');
   console.log('     - superadmin   (SUPERADMINISTRADOR)');
   console.log('     - admin        (ADMINISTRADOR, Sucursal Centro)');
@@ -210,6 +210,6 @@ async function seed(conn) {
 }
 
 main().catch((err) => {
-  console.error('❌ Error inicializando la base de datos:', err.message);
+  console.error('Error inicializando la base de datos:', err.message);
   process.exit(1);
 });

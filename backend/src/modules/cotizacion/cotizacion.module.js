@@ -17,7 +17,7 @@ function nowDateTime() {
   return local.toISOString().slice(0, 19).replace('T', ' ');
 }
 
-// --- Cotizacion en vivo (API gratuita sin key), cacheada 10 minutos ---
+// Cotizacion en vivo (API gratuita sin key), cacheada 10 minutos
 let cache = { ts: 0, rates: null };
 async function live() {
   if (cache.rates && Date.now() - cache.ts < 10 * 60 * 1000) return cache.rates;

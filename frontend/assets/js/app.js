@@ -71,7 +71,7 @@ function page(handler) {
 
 router.add('/login', page(loginPage));
 
-// ---- Superadmin ----
+// Superadmin
 router.add('/superadmin/dashboard', page(superadminDashboard), { role: SA });
 router.add('/superadmin/ver-empresas', page(verEmpresas), { role: SA });
 router.add('/superadmin/crear-empresa', page(crearEmpresa), { role: SA });
@@ -85,7 +85,7 @@ router.add('/superadmin/editar-usuario/:id', page(editarUsuario), { role: SA });
 router.add('/superadmin/configuraciones', page(configuraciones), { role: SA });
 router.add('/superadmin/suscripciones', page(suscripcionesPage), { role: SA });
 
-// ---- Admin ----
+// Admin
 router.add('/admin/dashboard', page(adminDashboard), { role: AD });
 router.add('/admin/gestionar-categorias', page(gestionarCategorias), { role: AD });
 router.add('/admin/gestionar-productos', page(gestionarProductos), { role: AD });
@@ -120,18 +120,18 @@ router.add('/admin/respaldo', page(respaldoPage), { role: AD });
 // Suscripción: disponible en cualquier paquete (sin `requiere`).
 router.add('/admin/suscripcion', page(suscripcionAdminPage), { role: AD });
 
-// ---- Empleado ----
+// Empleado
 router.add('/empleado/dashboard', page(empleadoDashboard), { role: EM });
 router.add('/empleado/conteo-libre/:id', page(conteoLibreEmpleado), { role: EM });
 router.add('/empleado/conteo-categorias/:id', page(conteoCategoriasEmpleado), { role: EM });
 
-// ---- Cajero (facturacion) ----
+// Cajero (facturacion)
 router.add('/facturacion/dashboard', page(cajeroDashboard), { role: CJ });
 router.add('/facturacion/pos', page(posPage), { role: CJ });
 router.add('/facturacion/ventas-turno', page(ventasTurnoPage), { role: CJ });
 router.add('/facturacion/cerrar-turno', page(cerrarTurnoPage), { role: CJ });
 
-// ---- Raiz / no encontrado ----
+// Raiz / no encontrado
 router.add('/', () => {
   if (auth.isAuthenticated() && !auth.isExpired()) router.navigate(auth.homeRoute().replace('#', ''));
   else router.navigate('/login');

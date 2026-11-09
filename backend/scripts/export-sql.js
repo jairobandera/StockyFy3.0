@@ -134,10 +134,10 @@ ${seed}
 
   const outPath = path.join(sqlDir, 'stockify_import.sql');
   fs.writeFileSync(outPath, out, 'utf8');
-  console.log(`✅ Dump generado: ${path.relative(process.cwd(), outPath)}`);
+  console.log(`Dump generado: ${path.relative(process.cwd(), outPath)}`);
 }
 
 main().catch((err) => {
-  console.error('❌ Error generando el dump:', err.message);
+  console.error('Error generando el dump:', err.message);
   process.exit(1);
 });

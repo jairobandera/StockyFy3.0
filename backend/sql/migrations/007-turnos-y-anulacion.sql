@@ -1,25 +1,22 @@
--- ============================================================
---  Migracion 007 - Turnos de caja y PIN de anulacion
--- ============================================================
---  Agrega:
---    * sucursal.pin_autorizacion: PIN de supervisor para que el cajero anule ventas.
---    * turno / turno_usuario: turnos de caja compartidos por varios cajeros.
---    * venta.turno_id: a que turno pertenece cada venta.
+-- Migracion 007 - Turnos de caja y PIN de anulacion
+-- Agrega:
+--   * sucursal.pin_autorizacion: PIN de supervisor para que el cajero anule ventas.
+--   * turno / turno_usuario: turnos de caja compartidos por varios cajeros.
+--   * venta.turno_id: a que turno pertenece cada venta.
 --
---  Uso:
---    mysql -u <usuario> -p <base> < backend/sql/migrations/007-turnos-y-anulacion.sql
+-- Uso:
+--   mysql -u <usuario> -p <base> < backend/sql/migrations/007-turnos-y-anulacion.sql
 --
---  Los ALTER no son idempotentes: si ya fueron aplicados MySQL devuelve
---  "Duplicate column name" / "Table already exists" y se puede ignorar.
--- ============================================================
-
--- ---------------- PIN DE ANULACION ----------------
+-- Los ALTER no son idempotentes: si ya fueron aplicados MySQL devuelve
+-- "Duplicate column name" / "Table already exists" y se puede ignorar.
+-- PIN DE ANULACION
 -- El cajero no puede anular una venta sin ingresar el PIN de la sucursal (lo
 -- configura el admin/superadmin). NULL = sin PIN definido todavia.
+
 ALTER TABLE sucursal
   ADD COLUMN pin_autorizacion VARCHAR(20) AFTER usa_facturacion;
 
--- ---------------- TURNO ----------------
+-- TURNO
 -- Uno por sucursal a la vez. numero: 1=manana 2=tarde 3=noche 4=otro.
 CREATE TABLE IF NOT EXISTS turno (
   id                     BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -40,7 +37,7 @@ CREATE TABLE IF NOT EXISTS turno (
   CONSTRAINT fk_turno_cierre      FOREIGN KEY (usuario_cierre_id)      REFERENCES usuario(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- TURNO_USUARIO ----------------
+-- TURNO_USUARIO
 CREATE TABLE IF NOT EXISTS turno_usuario (
   id             BIGINT AUTO_INCREMENT PRIMARY KEY,
   turno_id       BIGINT NOT NULL,
@@ -52,7 +49,7 @@ CREATE TABLE IF NOT EXISTS turno_usuario (
   CONSTRAINT fk_tu_usuario FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- VENTA.turno_id ----------------
+-- VENTA.turno_id
 ALTER TABLE venta
   ADD COLUMN turno_id BIGINT AFTER sucursal_id,
   ADD INDEX idx_venta_turno (turno_id),

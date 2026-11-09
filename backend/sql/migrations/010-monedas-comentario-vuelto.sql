@@ -1,17 +1,14 @@
--- ============================================================
---  Migracion 010 - Monedas (cotizaciones), comentario y vuelto en la venta
--- ============================================================
---  Agrega:
---    * cotizacion: cotizaciones manuales de USD/ARS/EUR por empresa (compra/venta
---      en PESOS URUGUAYOS por 1 unidad de la moneda).
---    * venta.moneda_pago / cotizacion / total_moneda: cobro en otra moneda (el total
---      "oficial" sigue en UYU).
---    * venta.efectivo_recibido / vuelto: efectivo entregado y vuelto (ventas contado).
---    * venta.comentario: nota opcional del cajero (sale en boleta y correo).
+-- Migracion 010 - Monedas (cotizaciones), comentario y vuelto en la venta
+-- Agrega:
+--   * cotizacion: cotizaciones manuales de USD/ARS/EUR por empresa (compra/venta
+--     en PESOS URUGUAYOS por 1 unidad de la moneda).
+--   * venta.moneda_pago / cotizacion / total_moneda: cobro en otra moneda (el total
+--     "oficial" sigue en UYU).
+--   * venta.efectivo_recibido / vuelto: efectivo entregado y vuelto (ventas contado).
+--   * venta.comentario: nota opcional del cajero (sale en boleta y correo).
 --
---  Uso:
---    mysql -u <usuario> -p <base> < backend/sql/migrations/010-monedas-comentario-vuelto.sql
--- ============================================================
+-- Uso:
+--   mysql -u <usuario> -p <base> < backend/sql/migrations/010-monedas-comentario-vuelto.sql
 
 CREATE TABLE IF NOT EXISTS cotizacion (
   id          BIGINT AUTO_INCREMENT PRIMARY KEY,

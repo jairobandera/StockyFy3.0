@@ -126,7 +126,7 @@ export async function clienteCuentaPage(ctx) {
     );
   }
 
-  // -------- Acciones --------
+  // Acciones
   async function registrarPago(resumen) {
     const { value, isConfirmed } = await Swal.fire({
       title: 'Registrar pago',

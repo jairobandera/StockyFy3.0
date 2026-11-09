@@ -58,7 +58,7 @@ async function empresaById(id) {
   return rows[0] || null;
 }
 
-// ---- Caches para el guard (evita una consulta por request) ----
+// Caches para el guard (evita una consulta por request)
 const empresaDeSucursalCache = new Map(); // sucursalId -> empresaId
 const bloqueadaCache = new Map();          // empresaId -> { bloqueada, expira }
 const TTL = 30000;
@@ -153,7 +153,7 @@ export const suscripcionService = {
     return estado;
   },
 
-  // ---- Superadmin ----
+  // Superadmin
   async generarCodigo(empresaId, dias) {
     const emp = await empresaById(empresaId);
     if (!emp) throw notFound(`Empresa no encontrada con id: ${empresaId}`);

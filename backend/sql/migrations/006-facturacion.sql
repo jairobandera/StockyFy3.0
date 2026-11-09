@@ -1,27 +1,24 @@
--- ============================================================
---  Migracion 006 - Modulo de Facturacion
--- ============================================================
---  Agrega los paquetes por sucursal (control de stock / facturacion),
---  y las tablas de clientes, ventas y renglones de venta.
+-- Migracion 006 - Modulo de Facturacion
+-- Agrega los paquetes por sucursal (control de stock / facturacion),
+-- y las tablas de clientes, ventas y renglones de venta.
 --
---  Uso:
---    mysql -u <usuario> -p <base> < backend/sql/migrations/006-facturacion.sql
+-- Uso:
+--   mysql -u <usuario> -p <base> < backend/sql/migrations/006-facturacion.sql
 --
---  Los ALTER no son idempotentes: si ya fueron aplicados MySQL devuelve
---  "Duplicate column name" / "Table already exists" y se puede ignorar.
--- ============================================================
-
--- ---------------- PAQUETES POR SUCURSAL ----------------
+-- Los ALTER no son idempotentes: si ya fueron aplicados MySQL devuelve
+-- "Duplicate column name" / "Table already exists" y se puede ignorar.
+-- PAQUETES POR SUCURSAL
 -- usa_stock:       conteos + estadisticas de conteo (lo que ya existia).
 -- usa_facturacion: punto de venta + ventas + clientes + estadisticas de venta.
 -- Defaults preservan el comportamiento actual: toda sucursal existente queda
 -- como "solo control de stock".
+
 ALTER TABLE sucursal
   ADD COLUMN usa_stock BOOLEAN NOT NULL DEFAULT TRUE AFTER usa_lotes;
 ALTER TABLE sucursal
   ADD COLUMN usa_facturacion BOOLEAN NOT NULL DEFAULT FALSE AFTER usa_stock;
 
--- ---------------- CLIENTE ----------------
+-- CLIENTE
 -- Scoped por sucursal como el resto del sistema. El RUT es opcional: el
 -- consumidor final no crea cliente. Cuando hay RUT es unico dentro de la sucursal.
 CREATE TABLE IF NOT EXISTS cliente (
@@ -40,7 +37,7 @@ CREATE TABLE IF NOT EXISTS cliente (
   CONSTRAINT fk_cliente_sucursal FOREIGN KEY (sucursal_id) REFERENCES sucursal(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- VENTA ----------------
+-- VENTA
 -- Registro interno de la venta. Las columnas cfe_* quedan preparadas para la
 -- factura electronica de Uruguay (DGI/CFE): hoy la venta nace con estado INTERNO.
 CREATE TABLE IF NOT EXISTS venta (
@@ -59,7 +56,7 @@ CREATE TABLE IF NOT EXISTS venta (
   fecha_anulacion      DATETIME,
   usuario_anulacion_id BIGINT,
   activo               BOOLEAN NOT NULL DEFAULT TRUE,
-  -- ---- Factura electronica (DGI/CFE Uruguay) - preparado, hoy sin uso ----
+  -- Factura electronica (DGI/CFE Uruguay) - preparado, hoy sin uso
   cfe_tipo             VARCHAR(20),         -- E_TICKET | E_FACTURA
   cfe_serie            VARCHAR(10),
   cfe_numero           BIGINT,
@@ -76,7 +73,7 @@ CREATE TABLE IF NOT EXISTS venta (
   CONSTRAINT fk_venta_usuario_anulacion FOREIGN KEY (usuario_anulacion_id) REFERENCES usuario(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- VENTA_DETALLE (renglones) ----------------
+-- VENTA_DETALLE (renglones)
 -- Guarda snapshot de codigo/nombre/precio: si despues editan el producto, el
 -- historial de la venta no cambia.
 CREATE TABLE IF NOT EXISTS venta_detalle (

@@ -11,7 +11,7 @@ productoRoutes.get('/all', async (ctx, res) => sendJson(res, 200, await producto
 productoRoutes.get('/sucursal/:sucursalId/activos', async (ctx, res) =>
   sendJson(res, 200, await productoService.getActiveBySucursal(ctx.params.sucursalId)));
 
-// ---- Consulta de precios (kiosko publico, sin login) ----
+// Consulta de precios (kiosko publico, sin login)
 // Estado (si esta habilitada + nombre de la sucursal) y consulta por codigo.
 productoRoutes.get('/consulta/sucursal/:sucursalId', async (ctx, res) =>
   sendJson(res, 200, await productoService.consultaInfo(ctx.params.sucursalId)));

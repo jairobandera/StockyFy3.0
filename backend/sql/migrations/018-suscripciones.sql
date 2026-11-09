@@ -1,14 +1,11 @@
--- ============================================================
---  Migracion 018 - Suscripciones (claves de activacion por empresa)
--- ============================================================
---  - empresa: prueba de 7 dias desde `fecha_alta`; luego hay que activar con una clave
---    que extiende `suscripcion_hasta`. `suscripcion_ilimitada` = no vence nunca.
---  - codigo_activacion: claves de un solo uso que genera el superadmin por empresa.
---  Las empresas que YA existen arrancan su prueba de 7 dias AHORA: al agregar
---  `fecha_alta` con DEFAULT CURRENT_TIMESTAMP, MySQL/MariaDB la setea a la fecha del ALTER.
---  Uso:
---    mysql -u <usuario> -p <base> < backend/sql/migrations/018-suscripciones.sql
--- ============================================================
+-- Migracion 018 - Suscripciones (claves de activacion por empresa)
+-- - empresa: prueba de 7 dias desde `fecha_alta`; luego hay que activar con una clave
+--   que extiende `suscripcion_hasta`. `suscripcion_ilimitada` = no vence nunca.
+-- - codigo_activacion: claves de un solo uso que genera el superadmin por empresa.
+-- Las empresas que YA existen arrancan su prueba de 7 dias AHORA: al agregar
+-- `fecha_alta` con DEFAULT CURRENT_TIMESTAMP, MySQL/MariaDB la setea a la fecha del ALTER.
+-- Uso:
+--   mysql -u <usuario> -p <base> < backend/sql/migrations/018-suscripciones.sql
 
 ALTER TABLE empresa
   ADD COLUMN fecha_alta DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER telefono,

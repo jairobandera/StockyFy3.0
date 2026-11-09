@@ -39,7 +39,7 @@ export function configuracionFacturacionPage() {
     }
   }
 
-  // ---- Límite de crédito por defecto ----
+  // Límite de crédito por defecto
   function bloqueLimite(sucursalId, sucursal) {
     const input = h('input', {
       class: 'form-control', type: 'number', min: 0, step: '0.01',
@@ -62,7 +62,7 @@ export function configuracionFacturacionPage() {
     ]);
   }
 
-  // ---- PINes de anulación ----
+  // PINes de anulación
   function bloquePines(sucursalId, pines) {
     const lista = h('div', { class: 'mb-3' });
     const pintar = (items) => {
@@ -142,7 +142,7 @@ export function configuracionFacturacionPage() {
     ]);
   }
 
-  // ---- Cotizaciones de moneda (compartidas por la empresa) ----
+  // Cotizaciones de moneda (compartidas por la empresa)
   function bloqueCotizaciones(empresaId) {
     const card = h('div', { class: 'sk-card p-4 mb-3' }, [
       h('h6', { class: 'mb-1' }, 'Cotizaciones de moneda'),

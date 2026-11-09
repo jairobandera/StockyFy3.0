@@ -1,15 +1,12 @@
--- ============================================================
---  Migracion 012 - Paquete "Solo envio de correos"
--- ============================================================
---  Automatiza el envio del estado de cuenta de la quincena por email, cargando los
---  datos desde Excel (sin usar la facturacion de la app). Agrega:
---    * sucursal.usa_envio_correos (flag del paquete).
---    * contacto_correo: lista de contactos reutilizable por sucursal (clave/nombre/email).
---    * envio_correo + envio_correo_detalle: historial de envios y sus destinatarios.
+-- Migracion 012 - Paquete "Solo envio de correos"
+-- Automatiza el envio del estado de cuenta de la quincena por email, cargando los
+-- datos desde Excel (sin usar la facturacion de la app). Agrega:
+--   * sucursal.usa_envio_correos (flag del paquete).
+--   * contacto_correo: lista de contactos reutilizable por sucursal (clave/nombre/email).
+--   * envio_correo + envio_correo_detalle: historial de envios y sus destinatarios.
 --
---  Uso:
---    mysql -u <usuario> -p <base> < backend/sql/migrations/012-envio-correos.sql
--- ============================================================
+-- Uso:
+--   mysql -u <usuario> -p <base> < backend/sql/migrations/012-envio-correos.sql
 
 ALTER TABLE sucursal
   ADD COLUMN usa_envio_correos BOOLEAN NOT NULL DEFAULT FALSE AFTER usa_consulta_precio;

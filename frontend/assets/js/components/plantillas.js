@@ -52,7 +52,7 @@ export const PLANTILLAS = {
       { Codigo: '003001', StockFinal: 45 },
     ],
   },
-  // --- Paquete "Solo envio de correos" ---
+  // Paquete "Solo envio de correos"
   correosContactos: {
     titulo: 'Contactos (correos)',
     icon: 'bi-person-lines-fill',

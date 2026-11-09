@@ -87,7 +87,7 @@ export const clienteRoutes = clienteCrud.buildRoutes((routes) => {
     sendJson(res, 200, await enviarQuincena({ sucursalId, desde, hasta, clienteIds, usuarioId }));
   });
 
-  // ---- Cuenta corriente de un cliente ----
+  // Cuenta corriente de un cliente
   routes.get('/:id/cuenta', async (ctx, res) => {
     sendJson(res, 200, await cuentaService.resumen(ctx.params.id));
   });

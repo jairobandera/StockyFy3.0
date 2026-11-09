@@ -59,9 +59,8 @@ async function ensureSinCategoria(conn, sucursalId) {
 }
 
 /**
- * Sincroniza los codigos de barra de un producto. NUNCA borra una fila: a un
- * producto le cambian el EAN y conviven el viejo y el nuevo, asi que los codigos
- * se acumulan y sacar uno es siempre una baja logica (activo = 0).
+ * Sincroniza los codigos de barra de un producto. No borra nunca, solo da de baja
+ * (a veces cambian el EAN y tienen que seguir andando los dos).
  *
  * @param {object} [opciones]
  * @param {'merge'|'reemplazar'} [opciones.modo]
@@ -69,8 +68,7 @@ async function ensureSinCategoria(conn, sucursalId) {
  *        'reemplazar': ademas desactiva los que no vengan en la lista (formulario).
  * @returns {{agregados: string[], reactivados: string[], desactivados: string[],
  *            yaExistian: string[], conflictos: Array<{codigo: string, codigoProducto: string}>}}
- *        Los conflictos NO se lanzan: los reporta el llamador. Antes un EAN repetido
- *        hacia rollback de la transaccion y se perdia el producto entero.
+ *        Los conflictos no se tiran como error, los maneja el que llama.
  */
 /**
  * Categoria de una fila del Excel de catalogo. Busca por id, por codigo y por
@@ -219,7 +217,7 @@ export const productoService = {
   getByCodigoProductoAndSucursal: (codigo, sucursalId) =>
     productoRepository.findByCodigoProductoActiveAndSucursal(codigo, sucursalId),
 
-  // ---- Consulta de precios (kiosko publico) ----
+  // Consulta de precios (kiosko publico)
   // Estado de la consulta: si esta habilitada y el nombre de la sucursal. Publico.
   async consultaInfo(sucursalId) {
     const rows = await query(

@@ -54,7 +54,7 @@ export async function cajeroDashboard() {
     wrap.append(panelTurno(), accesos());
   }
 
-  // -------- Sin turno abierto --------
+  // Sin turno abierto
   function cardIniciar() {
     const btn = primaryButton('Iniciar turno', 'bi-play-circle', iniciarTurno);
     return h('div', { class: 'sk-card p-4 text-center' }, [
@@ -87,7 +87,7 @@ export async function cajeroDashboard() {
     } catch (err) { ui.close(); ui.error(err.message); }
   }
 
-  // -------- Turno abierto por otros: unirse --------
+  // Turno abierto por otros: unirse
   function cardUnirse() {
     const resp = turno.usuarioResponsableId ? nombreParticipante(turno.usuarioResponsableId) : 'Sin responsable';
     return h('div', { class: 'sk-card p-4 text-center' }, [
@@ -128,7 +128,7 @@ export async function cajeroDashboard() {
     } catch (err) { ui.close(); ui.error(err.message); }
   }
 
-  // -------- Turno abierto y soy miembro --------
+  // Turno abierto y soy miembro
   function panelTurno() {
     const responsable = turno.usuarioResponsableId ? nombreParticipante(turno.usuarioResponsableId) : 'Sin responsable';
     const participantes = (turno.participantes || []).map((p) =>

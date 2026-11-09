@@ -160,7 +160,7 @@ export function gestionarProductos() {
 
   /**
    * Pantalla de códigos de barra de un producto: la única vía para QUITAR uno.
-   * Quitar es baja lógica — el código deja de escanear pero queda en la base.
+   * Quitar es baja lógica, el código deja de escanear pero queda en la base.
    */
   async function gestionarBarras(row) {
     let producto = row;

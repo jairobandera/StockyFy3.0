@@ -1,14 +1,11 @@
--- ============================================================
---  Migracion 009 - Credenciales de correo (SMTP) por sucursal
--- ============================================================
---  Cada sucursal puede tener su propia casilla de envio (correo + contrasena de
---  aplicacion de 16 caracteres). La carga el superadministrador en el formulario de
---  sucursal. Si estan vacias, el envio usa la config global del .env (si existe).
---  smtp_pass NUNCA se devuelve en un GET.
+-- Migracion 009 - Credenciales de correo (SMTP) por sucursal
+-- Cada sucursal puede tener su propia casilla de envio (correo + contrasena de
+-- aplicacion de 16 caracteres). La carga el superadministrador en el formulario de
+-- sucursal. Si estan vacias, el envio usa la config global del .env (si existe).
+-- smtp_pass NUNCA se devuelve en un GET.
 --
---  Uso:
---    mysql -u <usuario> -p <base> < backend/sql/migrations/009-smtp-por-sucursal.sql
--- ============================================================
+-- Uso:
+--   mysql -u <usuario> -p <base> < backend/sql/migrations/009-smtp-por-sucursal.sql
 
 ALTER TABLE sucursal
   ADD COLUMN smtp_user   VARCHAR(255)            AFTER limite_credito_default,

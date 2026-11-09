@@ -47,7 +47,7 @@ export const sucursalRoutes = sucursalCrud.buildRoutes((routes, { normalize }) =
     sendJson(res, 200, rows.map(normalize));
   });
 
-  // ---- PINes de anulacion (hasta 3 por sucursal, los gestiona el administrador) ----
+  // PINes de anulacion (hasta 3 por sucursal, los gestiona el administrador)
   // El listado NUNCA devuelve el valor del PIN, solo id, etiqueta y activo.
   routes.get('/:id/pines', async (ctx, res) => {
     const rows = await query(
@@ -102,7 +102,7 @@ export const sucursalRoutes = sucursalCrud.buildRoutes((routes, { normalize }) =
     sendJson(res, 200, { ok: true });
   });
 
-  // ---- Credenciales de correo (SMTP) de la sucursal ----
+  // Credenciales de correo (SMTP) de la sucursal
   // Devuelve la config SIN la contrasena. `configurado` considera tambien el .env global.
   routes.get('/:id/smtp', async (ctx, res) => {
     const rows = await query(

@@ -1,15 +1,12 @@
--- ============================================================
---  Migracion 017 - Promos y descuentos (solo paquete completo)
--- ============================================================
---  - promocion / promocion_producto: precio especial para una lista de productos,
---    por sucursal, con vigencia (desde/hasta; hasta NULL = sin fin / baja manual).
---  - descuento_codigo: codigos de un solo uso que el cajero aplica en el POS (% o
---    monto fijo sobre el total), por sucursal, con vencimiento opcional.
---  - venta: columnas para registrar el descuento aplicado (la columna `descuento`
---    ya existia y guarda el monto).
---  Uso:
---    mysql -u <usuario> -p <base> < backend/sql/migrations/017-promos-y-descuentos.sql
--- ============================================================
+-- Migracion 017 - Promos y descuentos (solo paquete completo)
+-- - promocion / promocion_producto: precio especial para una lista de productos,
+--   por sucursal, con vigencia (desde/hasta; hasta NULL = sin fin / baja manual).
+-- - descuento_codigo: codigos de un solo uso que el cajero aplica en el POS (% o
+--   monto fijo sobre el total), por sucursal, con vencimiento opcional.
+-- - venta: columnas para registrar el descuento aplicado (la columna `descuento`
+--   ya existia y guarda el monto).
+-- Uso:
+--   mysql -u <usuario> -p <base> < backend/sql/migrations/017-promos-y-descuentos.sql
 
 CREATE TABLE IF NOT EXISTS promocion (
   id          BIGINT AUTO_INCREMENT PRIMARY KEY,

@@ -68,7 +68,7 @@ async function renderEmpresa(panel, empresaId) {
   } catch (err) { clear(panel); panel.append(h('div', { class: 'alert alert-danger' }, err.message)); return; }
   clear(panel);
 
-  // ---- Estado + ilimitada ----
+  // Estado + ilimitada
   const vence = estado.ilimitada ? 'No vence (ilimitada)'
     : estado.bloqueada ? `Venció el ${fmt.date(estado.vigenteHasta)}`
       : `Vigente hasta ${fmt.date(estado.vigenteHasta)} (${estado.diasRestantes} día(s))`;
@@ -88,7 +88,7 @@ async function renderEmpresa(panel, empresaId) {
     ]),
   ]));
 
-  // ---- Generar clave ----
+  // Generar clave
   const durSel = h('select', { class: 'form-select w-auto' }, DURACIONES.map((d) => h('option', { value: String(d.value) }, d.label)));
   durSel.value = '30';
   const genBtn = h('button', { class: 'btn btn-primary' }, [h('i', { class: 'bi bi-key me-1' }), 'Generar clave']);
@@ -107,7 +107,7 @@ async function renderEmpresa(panel, empresaId) {
     h('div', { class: 'd-flex flex-wrap gap-2 align-items-center' }, [durSel, genBtn]),
   ]));
 
-  // ---- Claves generadas ----
+  // Claves generadas
   const tabla = codigos.length ? dataTable({
     columns: [
       { key: 'codigo', label: 'Clave' },

@@ -77,7 +77,7 @@ export function correosContactosPage() {
 
     const items = [];
     let filasConDatos = 0;
-    let sinEmail = 0;     // tiene clave pero no un email válido → no se le puede enviar
+    let sinEmail = 0;     // tiene clave pero no un email válido -> no se le puede enviar
     let sinClave = 0;     // tiene email pero no clave
     for (const f of filas) {
       const clave = claveCodigo(f.clave);

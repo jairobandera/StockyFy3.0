@@ -24,7 +24,7 @@ export async function handleRequest(req, res) {
   const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   const pathname = parsedUrl.pathname;
 
-  // -------- API --------
+  // API
   if (pathname.startsWith(config.apiBase)) {
     const apiPath = pathname.slice(config.apiBase.length) || '/';
     const matched = apiRouter.match(req.method, apiPath);
@@ -55,13 +55,13 @@ export async function handleRequest(req, res) {
     return;
   }
 
-  // -------- Health check --------
+  // Health check
   if (pathname === '/health' || pathname === '/api/health') {
     sendJson(res, 200, { status: 'ok', service: 'stockify-backend', version: '2.0.0' });
     return;
   }
 
-  // -------- Frontend estatico --------
+  // Frontend estatico
   if (config.serveFrontend && req.method === 'GET') {
     const served = serveStatic(req, res, frontendDir, pathname);
     if (served) return;

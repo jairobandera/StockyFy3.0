@@ -81,7 +81,7 @@ export async function posPage() {
       [h('i', { class: 'bi bi-currency-exchange me-1' }), 'Conversor']),
   ]));
 
-  // ---- Boton de alta (solo busqueda manual: el escaneo con camara se quito, se usa
+  // Boton de alta (solo busqueda manual: el escaneo con camara se quito, se usa
   //      el lector fisico que ya funciona via el listener de teclado de abajo) ----
   const manualBtn = h('button', { class: 'btn btn-primary btn-lg w-100 py-3 d-flex align-items-center justify-content-center gap-2' },
     [h('i', { class: 'bi bi-search', style: { fontSize: '1.3rem' } }), 'Buscar producto']);
@@ -98,7 +98,7 @@ export async function posPage() {
     ]),
   ]);
 
-  // ---- Carrito ----
+  // Carrito
   const tbody = h('tbody');
   const cartTable = h('div', { class: 'sk-card p-0 mb-3' }, [
     h('div', { class: 'table-responsive' }, [
@@ -115,10 +115,10 @@ export async function posPage() {
     ]),
   ]);
 
-  // ---- Cliente ----
+  // Cliente
   const clienteBox = h('div', { class: 'sk-card p-3 mb-3' });
 
-  // ---- Totales + facturar ----
+  // Totales + facturar
   const subtotalEl = h('span', { class: 'fw-semibold' }, fmt.money(0));
   const totalEl = h('span', { class: 'fs-4 fw-bold' }, fmt.money(0));
   const cotizInfo = h('div', { class: 'text-muted small mb-2 d-none' });
@@ -142,7 +142,7 @@ export async function posPage() {
   ]);
   const comentarioInput = h('textarea', { class: 'form-control', rows: 2, placeholder: 'Comentario (opcional, sale en la boleta)' });
 
-  // ---- Código de descuento (solo paquete completo) ----
+  // Código de descuento (solo paquete completo)
   const descEl = h('span', { class: 'fw-semibold text-success' }, fmt.money(0));
   const descRow = h('div', { class: 'd-flex justify-content-between mb-1 d-none' }, [
     h('span', { class: 'text-success' }, [h('i', { class: 'bi bi-ticket-perforated me-1' }), 'Descuento']), descEl,
@@ -269,7 +269,7 @@ export async function posPage() {
   document.addEventListener('keydown', onKeydownScanner);
   onCleanup(() => document.removeEventListener('keydown', onKeydownScanner));
 
-  // -------------------- Carrito --------------------
+  // Carrito
   async function agregarAlCarrito(producto) {
     const existente = carrito.get(producto.id);
     const stockDisponible = Number(producto.cantidadStock);
@@ -358,7 +358,7 @@ export async function posPage() {
     facturarBtn.disabled = carrito.size === 0;
   }
 
-  // -------------------- Cliente --------------------
+  // Cliente
   function renderCliente() {
     clear(clienteBox);
     const titulo = h('div', { class: 'd-flex align-items-center justify-content-between mb-2' }, [
@@ -401,7 +401,7 @@ export async function posPage() {
     if (elegido) { cliente = elegido; renderCliente(); }
   }
 
-  // -------------------- Facturar --------------------
+  // Facturar
   async function facturar() {
     if (carrito.size === 0) return;
 

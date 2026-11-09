@@ -63,7 +63,7 @@ export function gestionarLotes(ctx) {
     })), 'lotes');
   });
 
-  // ---------------- Resumen por producto (descuadres) ----------------
+  // Resumen por producto (descuadres)
   const resumenWrap = h('div');
   const resumenSection = h('div', { class: 'mt-4' }, [
     h('h5', { class: 'fw-semibold mb-1' }, 'Stock por producto'),
@@ -139,7 +139,7 @@ export function gestionarLotes(ctx) {
     }
   }
 
-  // ---------------- Pagina ----------------
+  // Pagina
   pageRef = crudPage({
     navTitle: 'Lotes',
     title: 'Lotes',

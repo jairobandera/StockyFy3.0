@@ -25,7 +25,7 @@ export function mapeoColumnas({ matriz, campos, empresaId, tipo, conFiltro = fal
       ...Array.from({ length: nCols }, (_, c) => h('option', { value: String(c) }, `Col ${c + 1}${primerValor(c) ? `: ${primerValor(c).slice(0, 24)}` : ''}`)),
     ];
 
-    // --- selects por campo ---
+    // selects por campo
     const selects = {};      // campo -> <select> principal
     const selectsExtra = {}; // campo -> <select> secundario (compuesto)
     const camposRows = campos.map((f) => {
@@ -45,10 +45,10 @@ export function mapeoColumnas({ matriz, campos, empresaId, tipo, conFiltro = fal
       return h('div', { class: 'row g-2 align-items-center mb-2' }, cols);
     });
 
-    // --- fila de inicio ---
+    // fila de inicio
     const filaInicioInput = h('input', { class: 'form-control w-auto', type: 'number', min: 0, value: 0 });
 
-    // --- filtro opcional ---
+    // filtro opcional
     let filtroColSel, filtroValInput;
     let filtroRow = null;
     if (conFiltro) {
@@ -61,7 +61,7 @@ export function mapeoColumnas({ matriz, campos, empresaId, tipo, conFiltro = fal
       ]);
     }
 
-    // --- perfiles ---
+    // perfiles
     const perfilSel = h('select', { class: 'form-select w-auto' }, [h('option', { value: '' }, '— elegir perfil guardado —')]);
     let perfiles = [];
     const aplicarPerfil = (p) => {
@@ -143,7 +143,7 @@ export function mapeoColumnas({ matriz, campos, empresaId, tipo, conFiltro = fal
       } catch (err) { errorBox.textContent = err.message; errorBox.classList.remove('d-none'); }
     });
 
-    // --- tabla de vista previa ---
+    // tabla de vista previa
     const thead = h('tr', {}, [h('th', { class: 'small text-muted' }, 'fila'),
       ...Array.from({ length: nCols }, (_, c) => h('th', { class: 'small' }, `Col ${c + 1}`))]);
     const tbody = h('tbody', {}, preview.map((r, i) => h('tr', {}, [

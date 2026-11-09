@@ -1,23 +1,19 @@
--- ============================================================
---  Stockify 2.0 - Dump completo importable (MySQL / MariaDB)
---  Generado por: npm run db:export
+-- Stockify 2.0 - Dump completo importable (MySQL / MariaDB)
+-- Generado por: npm run db:export
 --
---  Como importar:
---   * IDE/cliente (HeidiSQL, Workbench, DBeaver, phpMyAdmin):
---       abrir este archivo y ejecutarlo, o "Importar" este .sql.
---   * Consola:  mysql -u root -p < stockify_import.sql
+-- Como importar:
+--  * IDE/cliente (HeidiSQL, Workbench, DBeaver, phpMyAdmin):
+--      abrir este archivo y ejecutarlo, o "Importar" este .sql.
+--  * Consola:  mysql -u root -p < stockify_import.sql
 --
---  Crea la base "facturafy", todas las tablas y datos de ejemplo.
---  Usuarios de prueba (contrasenia = "12345"): superadmin / admin / empleado
--- ============================================================
+-- Crea la base "facturafy", todas las tablas y datos de ejemplo.
+-- Usuarios de prueba (contrasenia = "12345"): superadmin / admin / empleado
 
 CREATE DATABASE IF NOT EXISTS `facturafy` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `facturafy`;
 
--- ============================================================
---  Stockify 2.0 - Esquema de base de datos (MySQL / MariaDB)
---  Migracion desde el modelo JPA/PostgreSQL original.
--- ============================================================
+-- Stockify 2.0 - Esquema de base de datos (MySQL / MariaDB)
+-- Migracion desde el modelo JPA/PostgreSQL original.
 SET FOREIGN_KEY_CHECKS = 0;
 
 DROP TABLE IF EXISTS import_perfil;
@@ -50,7 +46,7 @@ DROP TABLE IF EXISTS empresa;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
--- ---------------- EMPRESA ----------------
+-- EMPRESA
 CREATE TABLE empresa (
   id        BIGINT AUTO_INCREMENT PRIMARY KEY,
   nombre    VARCHAR(255),
@@ -60,7 +56,7 @@ CREATE TABLE empresa (
   activo    BOOLEAN NOT NULL DEFAULT TRUE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- COTIZACION (cambio de moneda por empresa) ----------------
+-- COTIZACION (cambio de moneda por empresa)
 -- Cotizaciones manuales que carga el administrador, COMPARTIDAS por todas las
 -- sucursales de la empresa. `compra`/`venta` se expresan en PESOS URUGUAYOS por 1
 -- unidad de la moneda (ej. USD compra 40.0 = $40 por dolar). moneda: USD | ARS | EUR.
@@ -77,7 +73,7 @@ CREATE TABLE cotizacion (
   CONSTRAINT fk_cotizacion_empresa FOREIGN KEY (empresa_id) REFERENCES empresa(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- IMPORT_PERFIL (perfiles de mapeo de columnas de Excel) ----------------
+-- IMPORT_PERFIL (perfiles de mapeo de columnas de Excel)
 -- Guarda, por empresa y tipo de import (categorias/productos/stock/contactos/...), un
 -- mapeo nombrado {columna -> campo} para no re-mapear cada vez un export sin encabezado.
 CREATE TABLE import_perfil (
@@ -91,7 +87,7 @@ CREATE TABLE import_perfil (
   CONSTRAINT fk_importperfil_empresa FOREIGN KEY (empresa_id) REFERENCES empresa(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- SUCURSAL ----------------
+-- SUCURSAL
 CREATE TABLE sucursal (
   id         BIGINT AUTO_INCREMENT PRIMARY KEY,
   nombre     VARCHAR(255),
@@ -131,7 +127,7 @@ CREATE TABLE sucursal (
   CONSTRAINT fk_sucursal_empresa FOREIGN KEY (empresa_id) REFERENCES empresa(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- SUCURSAL_PIN (PINes de anulacion) ----------------
+-- SUCURSAL_PIN (PINes de anulacion)
 -- Hasta 3 PINes activos por sucursal (el maximo se controla en el servicio). El cajero
 -- ingresa cualquiera de ellos para anular una venta. El valor del PIN nunca se devuelve
 -- en un GET: solo la etiqueta y si esta configurado. Los administra el administrador.
@@ -145,7 +141,7 @@ CREATE TABLE sucursal_pin (
   CONSTRAINT fk_sucursalpin_sucursal FOREIGN KEY (sucursal_id) REFERENCES sucursal(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- USUARIO ----------------
+-- USUARIO
 CREATE TABLE usuario (
   id             BIGINT AUTO_INCREMENT PRIMARY KEY,
   nombre         VARCHAR(255),
@@ -160,7 +156,7 @@ CREATE TABLE usuario (
   CONSTRAINT fk_usuario_sucursal FOREIGN KEY (sucursal_id) REFERENCES sucursal(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- CATEGORIA ----------------
+-- CATEGORIA
 CREATE TABLE categoria (
   id                BIGINT AUTO_INCREMENT PRIMARY KEY,
   nombre            VARCHAR(255),
@@ -171,7 +167,7 @@ CREATE TABLE categoria (
   CONSTRAINT fk_categoria_sucursal FOREIGN KEY (sucursal_id) REFERENCES sucursal(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- PROVEEDOR ----------------
+-- PROVEEDOR
 CREATE TABLE proveedor (
   id              BIGINT AUTO_INCREMENT PRIMARY KEY,
   rut             VARCHAR(255) NOT NULL UNIQUE,
@@ -182,7 +178,7 @@ CREATE TABLE proveedor (
   activo          BOOLEAN NOT NULL DEFAULT TRUE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- PRODUCTO ----------------
+-- PRODUCTO
 CREATE TABLE producto (
   id              BIGINT AUTO_INCREMENT PRIMARY KEY,
   codigo_producto VARCHAR(255) NOT NULL,
@@ -201,7 +197,7 @@ CREATE TABLE producto (
   CONSTRAINT fk_producto_categoria FOREIGN KEY (categoria_id) REFERENCES categoria(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- CODIGO_BARRA ----------------
+-- CODIGO_BARRA
 CREATE TABLE codigo_barra (
   id          BIGINT AUTO_INCREMENT PRIMARY KEY,
   codigo      VARCHAR(255) NOT NULL,
@@ -218,7 +214,7 @@ CREATE TABLE codigo_barra (
   CONSTRAINT fk_codigobarra_sucursal FOREIGN KEY (sucursal_id) REFERENCES sucursal(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- LOTE ----------------
+-- LOTE
 CREATE TABLE lote (
   id                BIGINT AUTO_INCREMENT PRIMARY KEY,
   numero_lote       VARCHAR(255) NOT NULL,
@@ -236,7 +232,7 @@ CREATE TABLE lote (
   CONSTRAINT fk_lote_producto FOREIGN KEY (producto_id) REFERENCES producto(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- PRODUCTO_PROVEEDOR (N:M) ----------------
+-- PRODUCTO_PROVEEDOR (N:M)
 CREATE TABLE producto_proveedor (
   producto_id  BIGINT NOT NULL,
   proveedor_id BIGINT NOT NULL,
@@ -245,7 +241,7 @@ CREATE TABLE producto_proveedor (
   CONSTRAINT fk_pp_proveedor FOREIGN KEY (proveedor_id) REFERENCES proveedor(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- SUCURSAL_PROVEEDOR ----------------
+-- SUCURSAL_PROVEEDOR
 CREATE TABLE sucursal_proveedor (
   id           BIGINT AUTO_INCREMENT PRIMARY KEY,
   sucursal_id  BIGINT NOT NULL,
@@ -254,7 +250,7 @@ CREATE TABLE sucursal_proveedor (
   CONSTRAINT fk_sp_proveedor FOREIGN KEY (proveedor_id) REFERENCES proveedor(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- CONTEO ----------------
+-- CONTEO
 CREATE TABLE conteo (
   id                BIGINT AUTO_INCREMENT PRIMARY KEY,
   fecha_hora        DATETIME,
@@ -270,7 +266,7 @@ CREATE TABLE conteo (
   CONSTRAINT fk_conteo_sucursal FOREIGN KEY (sucursal_id) REFERENCES sucursal(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- CONTEO_PRODUCTO (renglones del conteo) ----------------
+-- CONTEO_PRODUCTO (renglones del conteo)
 CREATE TABLE conteo_producto (
   id                INT AUTO_INCREMENT PRIMARY KEY,
   precio_actual     FLOAT NOT NULL DEFAULT 0,
@@ -285,7 +281,7 @@ CREATE TABLE conteo_producto (
   CONSTRAINT fk_cp_usuario  FOREIGN KEY (usuario_id)  REFERENCES usuario(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- CONTEO_USUARIO (participantes) ----------------
+-- CONTEO_USUARIO (participantes)
 CREATE TABLE conteo_usuario (
   id         BIGINT AUTO_INCREMENT PRIMARY KEY,
   usuario_id BIGINT NOT NULL,
@@ -295,7 +291,7 @@ CREATE TABLE conteo_usuario (
   CONSTRAINT fk_cu_conteo  FOREIGN KEY (conteo_id)  REFERENCES conteo(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- REPORTE ----------------
+-- REPORTE
 CREATE TABLE reporte (
   id                    BIGINT AUTO_INCREMENT PRIMARY KEY,
   fecha_generacion      DATE,
@@ -305,7 +301,7 @@ CREATE TABLE reporte (
   activo                BOOLEAN NOT NULL DEFAULT TRUE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- REPORTE_CONTEO (N:M) ----------------
+-- REPORTE_CONTEO (N:M)
 CREATE TABLE reporte_conteo (
   reporte_id BIGINT NOT NULL,
   conteo_id  BIGINT NOT NULL,
@@ -314,11 +310,8 @@ CREATE TABLE reporte_conteo (
   CONSTRAINT fk_rc_conteo  FOREIGN KEY (conteo_id)  REFERENCES conteo(id)  ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ============================================================
---  FACTURACION
--- ============================================================
-
--- ---------------- CLIENTE ----------------
+-- FACTURACION
+-- CLIENTE
 -- Scoped por sucursal. El RUT es opcional (el consumidor final no crea cliente)
 -- y es unico dentro de la sucursal cuando esta presente.
 CREATE TABLE cliente (
@@ -340,7 +333,7 @@ CREATE TABLE cliente (
   CONSTRAINT fk_cliente_sucursal FOREIGN KEY (sucursal_id) REFERENCES sucursal(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- TURNO (caja) ----------------
+-- TURNO (caja)
 -- Un turno agrupa las ventas de una jornada de caja. Es UNO por sucursal a la vez:
 -- mientras hay un turno ABIERTO, los cajeros que entran se suman a el (turno_usuario).
 -- numero: 1=manana, 2=tarde, 3=noche, 4=otro. El responsable es el cajero que se
@@ -365,7 +358,7 @@ CREATE TABLE turno (
   CONSTRAINT fk_turno_cierre      FOREIGN KEY (usuario_cierre_id)      REFERENCES usuario(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- TURNO_USUARIO (cajeros que trabajan el turno) ----------------
+-- TURNO_USUARIO (cajeros que trabajan el turno)
 -- Varios cajeros pueden trabajar el mismo turno. Un cajero se une una sola vez.
 CREATE TABLE turno_usuario (
   id             BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -378,7 +371,7 @@ CREATE TABLE turno_usuario (
   CONSTRAINT fk_tu_usuario FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- VENTA ----------------
+-- VENTA
 -- Registro interno de la venta. Las columnas cfe_* quedan preparadas para la
 -- factura electronica de Uruguay (DGI/CFE): hoy la venta nace con estado INTERNO.
 CREATE TABLE venta (
@@ -409,7 +402,7 @@ CREATE TABLE venta (
   fecha_anulacion      DATETIME,
   usuario_anulacion_id BIGINT,
   activo               BOOLEAN NOT NULL DEFAULT TRUE,
-  -- ---- Factura electronica (DGI/CFE Uruguay) - preparado, hoy sin uso ----
+  -- Factura electronica (DGI/CFE Uruguay) - preparado, hoy sin uso
   cfe_tipo             VARCHAR(20),         -- E_TICKET | E_FACTURA
   cfe_serie            VARCHAR(10),
   cfe_numero           BIGINT,
@@ -428,7 +421,7 @@ CREATE TABLE venta (
   CONSTRAINT fk_venta_usuario_anulacion FOREIGN KEY (usuario_anulacion_id) REFERENCES usuario(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- VENTA_DETALLE (renglones) ----------------
+-- VENTA_DETALLE (renglones)
 -- Guarda snapshot de codigo/nombre/precio: si despues editan el producto, el
 -- historial de la venta no cambia.
 CREATE TABLE venta_detalle (
@@ -444,12 +437,12 @@ CREATE TABLE venta_detalle (
   CONSTRAINT fk_vd_producto FOREIGN KEY (producto_id) REFERENCES producto(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- CLIENTE_MOVIMIENTO (cuenta corriente) ----------------
+-- CLIENTE_MOVIMIENTO (cuenta corriente)
 -- Mayor de la cuenta corriente del cliente. El saldo (lo que debe) es
 -- SUMA(cargos) - SUMA(pagos). Tipos:
---   CARGO_VENTA -> una venta a credito (referencia la venta)
---   CARGO_MORA  -> cargo por mora que aplica el administrador (fijo o %)
---   PAGO        -> abono del cliente (total o parcial)
+--  CARGO_VENTA -> una venta a credito (referencia la venta)
+--  CARGO_MORA  -> cargo por mora que aplica el administrador (fijo o %)
+--  PAGO        -> abono del cliente (total o parcial)
 -- monto siempre positivo; el signo lo da el tipo (CARGO_* suma, PAGO resta).
 CREATE TABLE cliente_movimiento (
   id          BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -466,7 +459,7 @@ CREATE TABLE cliente_movimiento (
   CONSTRAINT fk_climov_usuario FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- CONTACTO_CORREO (paquete "Solo envio de correos") ----------------
+-- CONTACTO_CORREO (paquete "Solo envio de correos")
 -- Lista de contactos reutilizable, por sucursal, para el envio del estado de cuenta.
 -- Se carga/actualiza desde Excel (merge por `clave`). No tiene relacion con `cliente`.
 -- `clave` se guarda normalizada (ver claveCodigo) para cruzar con el Excel de estado de cuenta.
@@ -482,7 +475,7 @@ CREATE TABLE contacto_correo (
   CONSTRAINT fk_contacto_sucursal FOREIGN KEY (sucursal_id) REFERENCES sucursal(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- ENVIO_CORREO (historial de envios de quincena) ----------------
+-- ENVIO_CORREO (historial de envios de quincena)
 CREATE TABLE envio_correo (
   id            BIGINT AUTO_INCREMENT PRIMARY KEY,
   sucursal_id   BIGINT NOT NULL,
@@ -500,7 +493,7 @@ CREATE TABLE envio_correo (
   CONSTRAINT fk_envio_usuario  FOREIGN KEY (usuario_id)  REFERENCES usuario(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------- ENVIO_CORREO_DETALLE (destinatarios de cada envio) ----------------
+-- ENVIO_CORREO_DETALLE (destinatarios de cada envio)
 CREATE TABLE envio_correo_detalle (
   id       BIGINT AUTO_INCREMENT PRIMARY KEY,
   envio_id BIGINT NOT NULL,
@@ -513,10 +506,7 @@ CREATE TABLE envio_correo_detalle (
   CONSTRAINT fk_enviodet_envio FOREIGN KEY (envio_id) REFERENCES envio_correo(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ============================================================
---  Datos de ejemplo (usuarios de prueba, contrasenia = "12345")
--- ============================================================
-
+-- Datos de ejemplo (usuarios de prueba, contrasenia = "12345")
 INSERT INTO empresa (id, nombre, rut, direccion, telefono) VALUES
   (1, 'Distribuidora Demo S.A.', '210000000012', 'Av. Siempre Viva 742', '099111222');
 

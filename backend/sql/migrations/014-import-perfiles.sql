@@ -1,12 +1,9 @@
--- ============================================================
---  Migracion 014 - Perfiles de mapeo de columnas (importacion de Excel)
--- ============================================================
---  Guarda por empresa+tipo un mapeo nombrado para importar Excels sin encabezado
---  (o con columnas distintas) sin tener que re-mapear cada vez.
+-- Migracion 014 - Perfiles de mapeo de columnas (importacion de Excel)
+-- Guarda por empresa+tipo un mapeo nombrado para importar Excels sin encabezado
+-- (o con columnas distintas) sin tener que re-mapear cada vez.
 --
---  Uso:
---    mysql -u <usuario> -p <base> < backend/sql/migrations/014-import-perfiles.sql
--- ============================================================
+-- Uso:
+--   mysql -u <usuario> -p <base> < backend/sql/migrations/014-import-perfiles.sql
 
 CREATE TABLE IF NOT EXISTS import_perfil (
   id         BIGINT AUTO_INCREMENT PRIMARY KEY,

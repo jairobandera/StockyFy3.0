@@ -1,19 +1,16 @@
--- ============================================================
---  Migracion 004 - Conteos por sucursal
--- ============================================================
---  El conteo pasa a saber en que sucursal se cuenta (antes se
---  deducia del creador o de los renglones, y no siempre coincidian),
---  y el usuario puede tener permiso para contar en otras sucursales
---  de su misma empresa.
+-- Migracion 004 - Conteos por sucursal
+-- El conteo pasa a saber en que sucursal se cuenta (antes se
+-- deducia del creador o de los renglones, y no siempre coincidian),
+-- y el usuario puede tener permiso para contar en otras sucursales
+-- de su misma empresa.
 --
---  Uso:
---    mysql -u <usuario> -p <base> < backend/sql/migrations/004-conteo-sucursal.sql
+-- Uso:
+--   mysql -u <usuario> -p <base> < backend/sql/migrations/004-conteo-sucursal.sql
 --
---  Los ALTER no son idempotentes: si alguno ya fue aplicado MySQL
---  devuelve "Duplicate column/key name" y se puede ignorar.
--- ============================================================
+-- Los ALTER no son idempotentes: si alguno ya fue aplicado MySQL
+-- devuelve "Duplicate column/key name" y se puede ignorar.
+-- 1) conteo.sucursal_id
 
--- ---- 1) conteo.sucursal_id ---------------------------------
 ALTER TABLE conteo ADD COLUMN sucursal_id BIGINT NULL AFTER usuario_id;
 
 ALTER TABLE conteo
@@ -42,7 +39,7 @@ SELECT id, fecha_hora, usuario_id, tipo_conteo
   FROM conteo
  WHERE sucursal_id IS NULL;
 
--- ---- 2) usuario.cuenta_en_cualquier_sucursal ---------------
+-- 2) usuario.cuenta_en_cualquier_sucursal
 -- Por defecto FALSE: cada usuario sigue limitado a su sucursal.
 ALTER TABLE usuario
   ADD COLUMN cuenta_en_cualquier_sucursal BOOLEAN NOT NULL DEFAULT FALSE AFTER sucursal_id;

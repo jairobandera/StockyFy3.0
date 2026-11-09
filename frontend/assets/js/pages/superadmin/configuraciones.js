@@ -88,7 +88,7 @@ function formularioSucursal(suc) {
     lotesCheck, h('label', { class: 'form-check-label', for: 'cfg-lotes' }, 'Usar lotes (vencimientos)'),
   ]);
 
-  // ---- Consulta de precios (kiosko), depende del paquete de facturacion ----
+  // Consulta de precios (kiosko), depende del paquete de facturacion
   const consultaCheck = h('input', { class: 'form-check-input', type: 'checkbox', id: 'cfg-consulta', checked: suc.usaConsultaPrecio === true });
   const consultaWrap = h('div', { class: 'form-check' }, [
     consultaCheck, h('label', { class: 'form-check-label', for: 'cfg-consulta' }, 'Habilitar consulta de precios (kiosko para clientes)'),

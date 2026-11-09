@@ -63,7 +63,7 @@ function config(extra = {}) {
           help: 'Si está marcado, los administradores de esta sucursal ven y usan la sección '
             + 'de Lotes (vencimientos y stock por lote). Si no, les queda deshabilitada.',
         },
-        // ---- Correo de envío (estados de cuenta de la quincena) ----
+        // Correo de envío (estados de cuenta de la quincena)
         {
           name: 'smtpUser', label: 'Correo de envío (Gmail)', type: 'email',
           value: smtp?.user || '', colClass: 'col-md-6',

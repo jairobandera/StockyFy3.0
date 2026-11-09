@@ -24,7 +24,7 @@ export function suscripcionAdminPage() {
     catch (err) { clear(panel); panel.append(h('div', { class: 'alert alert-danger' }, err.message)); return; }
     clear(panel);
 
-    // ---- Estado ----
+    // Estado
     let estadoBadge, detalle;
     if (est.ilimitada) {
       estadoBadge = badge('Ilimitada', 'primary');
@@ -47,7 +47,7 @@ export function suscripcionAdminPage() {
       h('p', { class: 'text-muted mb-0' }, detalle),
     ]));
 
-    // ---- Ingresar clave ----
+    // Ingresar clave
     const input = h('input', { class: 'form-control form-control-lg', placeholder: 'STK-XXXX-XXXX-XXXX', autocomplete: 'off' });
     const btn = h('button', { class: 'btn btn-primary' }, [h('i', { class: 'bi bi-key me-1' }), 'Activar']);
     btn.addEventListener('click', async () => {
