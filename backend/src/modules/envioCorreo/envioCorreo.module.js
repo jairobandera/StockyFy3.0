@@ -91,8 +91,8 @@ export const envioCorreoService = {
       await query(
         // COALESCE en cuenta: un re-import que no traiga la columna no borra el N° ya guardado.
         `INSERT INTO contacto_correo (sucursal_id, clave, cuenta, nombre, email, direccion, activo) VALUES (?,?,?,?,?,?,1)
-         ON DUPLICATE KEY UPDATE cuenta = COALESCE(VALUES(cuenta), cuenta),
-           nombre = VALUES(nombre), email = VALUES(email), direccion = VALUES(direccion), activo = 1`,
+         ON CONFLICT (sucursal_id, clave) DO UPDATE SET cuenta = COALESCE(EXCLUDED.cuenta, contacto_correo.cuenta),
+           nombre = EXCLUDED.nombre, email = EXCLUDED.email, direccion = EXCLUDED.direccion, activo = 1`,
         [sucursalId, clave, cuenta, nombre, email, direccion]
       );
       if (existentes.has(clave)) res.actualizados++; else { res.agregados++; existentes.add(clave); }

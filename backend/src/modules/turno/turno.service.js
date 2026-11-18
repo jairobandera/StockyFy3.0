@@ -7,7 +7,7 @@ import { badRequest, notFound, forbidden } from '../../core/httpError.js';
 import { assertUsaFacturacion } from '../sucursal/paquetes.js';
 import { turnoRepository, NUMERO_LABEL } from './turno.repository.js';
 
-/** Fecha y hora LOCAL del servidor en formato MySQL (igual criterio que venta/conteo). */
+/** Fecha y hora LOCAL del servidor en formato SQL (YYYY-MM-DD HH:MM:SS) (igual criterio que venta/conteo). */
 function nowDateTime() {
   const d = new Date();
   const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);

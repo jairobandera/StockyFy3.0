@@ -6,7 +6,7 @@ import { badRequest, notFound } from '../../core/httpError.js';
 
 const TIPOS = ['CARGO_VENTA', 'CARGO_MORA', 'PAGO'];
 
-/** Fecha y hora LOCAL del servidor en formato MySQL. */
+/** Fecha y hora LOCAL del servidor en formato SQL (YYYY-MM-DD HH:MM:SS). */
 function nowDateTime() {
   const d = new Date();
   const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);

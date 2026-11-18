@@ -32,8 +32,8 @@ export function createCrud(cfg) {
   }
 
   const repository = {
-    async findAllActive() { return query(`${SELECT} WHERE activo = 1`); },
-    async findAll() { return query(SELECT); },
+    async findAllActive() { return query(`${SELECT} WHERE activo = 1 ORDER BY id`); },
+    async findAll() { return query(`${SELECT} ORDER BY id`); },
     async findByIdActive(id) {
       const rows = await query(`${SELECT} WHERE id = ? AND activo = 1`, [id]);
       return rows[0] || null;

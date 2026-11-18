@@ -242,7 +242,7 @@ export function gestionarConteos() {
   onCleanup(() => { u1(); u2(); clearInterval(dotTimer); });
 }
 
-/** Fecha y hora local en formato MySQL (toISOString() da UTC y adelanta el dia de noche). */
+/** Fecha y hora local en formato SQL YYYY-MM-DD HH:MM:SS (toISOString() da UTC y adelanta el dia de noche). */
 function now() {
   const d = new Date();
   const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);

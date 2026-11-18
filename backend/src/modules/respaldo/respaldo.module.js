@@ -1,7 +1,7 @@
 // Respaldo/restauracion de TODA la base de datos (admin/superadmin). El respaldo es un
 // JSON autocontenido con todas las tablas y sus filas; la restauracion reemplaza los
 // datos actuales por los del respaldo dentro de una transaccion (todo o nada).
-// No depende de mysqldump ni de ningun binario externo: usa el propio pool.
+// No depende de pg_dump ni de ningun binario externo: usa el propio pool.
 import { Router } from '../../core/router.js';
 import { query, transaction } from '../../config/db.js';
 import { sendJson } from '../../core/http.js';
@@ -18,10 +18,13 @@ function assertRol(ctx) {
   }
 }
 
-// SHOW TABLES devuelve objetos con una unica clave dinamica (Tables_in_<base>).
+// Tablas del esquema de este negocio.
 async function listarTablas() {
-  const rows = await query('SHOW TABLES');
-  return rows.map((r) => Object.values(r)[0]).filter((t) => NOMBRE_IDENT.test(t));
+  const rows = await query(
+    `SELECT table_name AS t FROM information_schema.tables
+      WHERE table_schema = current_schema() AND table_type = 'BASE TABLE' ORDER BY table_name`
+  );
+  return rows.map((r) => r.t).filter((t) => NOMBRE_IDENT.test(t));
 }
 
 export const respaldoService = {
@@ -45,9 +48,11 @@ export const respaldoService = {
 
     let filas = 0;
     await transaction(async (conn) => {
-      await conn.query('SET FOREIGN_KEY_CHECKS = 0');
-      try {
-        for (const [tabla] of entradas) await conn.query(`DELETE FROM \`${tabla}\``);
+      // Las claves foraneas son DEFERRABLE: se validan al final de la transaccion, asi
+      // el orden en que se cargan las tablas no importa.
+      await conn.raw('SET CONSTRAINTS ALL DEFERRED');
+      {
+        await conn.raw(`TRUNCATE ${entradas.map(([t]) => `"${t}"`).join(', ')} CASCADE`);
         for (const [tabla, rows] of entradas) {
           if (!Array.isArray(rows) || !rows.length) continue;
           const cols = Object.keys(rows[0]);
@@ -65,8 +70,22 @@ export const respaldoService = {
             filas += chunk.length;
           }
         }
-      } finally {
-        await conn.query('SET FOREIGN_KEY_CHECKS = 1');
+        // Los ids vienen del respaldo: se adelantan las secuencias para que los nuevos no choquen.
+        for (const [tabla] of entradas) {
+          const { rows: conSecuencia } = await conn.raw(
+            `SELECT 1 FROM information_schema.columns
+              WHERE table_schema = current_schema() AND table_name = $1
+                AND column_name = 'id' AND column_default LIKE 'nextval%'`,
+            [tabla]
+          );
+          if (!conSecuencia.length) continue;
+          await conn.raw(
+            `SELECT setval(pg_get_serial_sequence($1, 'id')::regclass,
+                           GREATEST((SELECT COALESCE(MAX(id), 0) FROM "${tabla}"), 1),
+                           (SELECT COUNT(*) > 0 FROM "${tabla}"))`,
+            [`"${tabla}"`]
+          );
+        }
       }
     });
     return { ok: true, tablas: entradas.length, filas };

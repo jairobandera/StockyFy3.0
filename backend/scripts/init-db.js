@@ -1,39 +1,29 @@
-// Inicializa la base de datos: crea el esquema y carga datos de ejemplo.
+// Inicializa la base de datos: crea el esquema del negocio (DB_SCHEMA), las tablas y carga
+// datos de ejemplo. OJO: borra las tablas si ya existian (es para desarrollo y demos).
 // Uso: npm run db:init
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import mysql from 'mysql2/promise';
 import { config } from '../src/config/env.js';
+import { pool, transaction } from '../src/config/db.js';
 import { hashPassword } from '../src/core/password.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const sqlDir = path.resolve(__dirname, '..', 'sql');
 
 async function main() {
-  // Conexion sin base seleccionada para poder crearla.
-  const root = await mysql.createConnection({
-    host: config.db.host,
-    port: config.db.port,
-    user: config.db.user,
-    password: config.db.password,
-    multipleStatements: true,
-  });
-
-  console.log(`> Creando base de datos "${config.db.database}" si no existe...`);
-  await root.query(
-    `CREATE DATABASE IF NOT EXISTS \`${config.db.database}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`
-  );
-  await root.query(`USE \`${config.db.database}\``);
+  const esquema = config.db.schema;
+  console.log(`> Creando el esquema "${esquema}" si no existe (base "${config.db.database}")...`);
+  await pool.query(`CREATE SCHEMA IF NOT EXISTS "${esquema}"`);
 
   console.log('> Ejecutando schema.sql...');
   const schema = fs.readFileSync(path.join(sqlDir, 'schema.sql'), 'utf8');
-  await root.query(schema);
+  await pool.query(schema);
 
   console.log('> Cargando datos de ejemplo...');
-  await seed(root);
+  await transaction((conn) => seed(conn));
 
-  await root.end();
+  await pool.end();
   console.log('\nBase de datos lista.');
   console.log('   Usuarios de prueba (contrasenia = "12345"):');
   console.log('     - superadmin   (SUPERADMINISTRADOR)');
@@ -209,7 +199,8 @@ async function seed(conn) {
   }
 }
 
-main().catch((err) => {
+main().catch(async (err) => {
   console.error('Error inicializando la base de datos:', err.message);
+  await pool.end().catch(() => {});
   process.exit(1);
 });

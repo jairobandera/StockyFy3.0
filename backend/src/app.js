@@ -75,7 +75,7 @@ function handleError(err, res) {
     sendJson(res, err.status, { error: err.message, status: err.status });
     return;
   }
-  // Errores de MySQL comunes -> mensajes utiles
+  // Errores comunes de la base -> mensajes utiles (db.js traduce el codigo de PostgreSQL)
   if (err && err.code === 'ER_DUP_ENTRY') {
     sendJson(res, 400, { error: 'Registro duplicado (valor unico ya existe)', detail: err.sqlMessage });
     return;

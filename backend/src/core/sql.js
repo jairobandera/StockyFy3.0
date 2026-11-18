@@ -16,7 +16,7 @@ export function buildSet(assignments) {
   return { clause: cols.join(', '), params };
 }
 
-/** Convierte un valor a booleano 0/1 para MySQL, respetando null/undefined. */
+/** Convierte un valor a booleano 0/1 (columnas SMALLINT), respetando null/undefined. */
 export function toBool(value) {
   if (value === undefined || value === null) return value;
   return value ? 1 : 0;

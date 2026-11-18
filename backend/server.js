@@ -8,9 +8,9 @@ import { initWebSocket } from './src/core/ws.js';
 async function main() {
   try {
     await testConnection();
-    console.log(`Conexion a MySQL "${config.db.database}" establecida.`);
+    console.log(`Conexion a PostgreSQL "${config.db.database}" (esquema "${config.db.schema}") establecida.`);
   } catch (err) {
-    console.error('No se pudo conectar a MySQL:', err.message);
+    console.error('No se pudo conectar a PostgreSQL:', err.message);
     console.error('  Revisa el archivo .env y ejecuta "npm run db:init".');
   }
 

@@ -36,12 +36,17 @@ export const config = {
   port: Number(process.env.PORT || 8080),
   apiBase: process.env.API_BASE || '/Stockify/api/v1',
   corsOrigin: process.env.CORS_ORIGIN || '*',
+  // PostgreSQL. DATABASE_URL (si esta) tiene prioridad sobre las variables sueltas.
+  // DB_SCHEMA: esquema donde viven las tablas (cada negocio usa el suyo).
   db: {
+    url: process.env.DATABASE_URL || '',
     host: process.env.DB_HOST || 'localhost',
-    port: Number(process.env.DB_PORT || 3306),
-    user: process.env.DB_USER || 'root',
+    port: Number(process.env.DB_PORT || 5432),
+    user: process.env.DB_USER || 'postgres',
     password: process.env.DB_PASS || '',
-    database: process.env.DB_NAME || 'facturafy',
+    database: process.env.DB_NAME || 'stockify',
+    schema: (process.env.DB_SCHEMA || 'stockify').trim().toLowerCase(),
+    ssl: String(process.env.DB_SSL || 'false') === 'true',
   },
   jwt: {
     secret: process.env.JWT_SECRET || '@TI2025',

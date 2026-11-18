@@ -1,6 +1,6 @@
-// Genera un dump SQL autocontenido e importable desde cualquier IDE / cliente MySQL
-// (phpMyAdmin, HeidiSQL, MySQL Workbench, DBeaver, consola mysql, etc.).
-// Incluye: CREATE DATABASE + USE + esquema (schema.sql) + datos de ejemplo.
+// Genera un script SQL autocontenido e importable desde cualquier cliente PostgreSQL
+// (HeidiSQL, DBeaver, pgAdmin, consola psql, etc.).
+// Incluye: CREATE SCHEMA + search_path + tablas (schema.sql) + datos de ejemplo.
 // Uso: npm run db:export   ->   genera sql/stockify_import.sql
 import fs from 'node:fs';
 import path from 'node:path';
@@ -10,12 +10,12 @@ import { config } from '../src/config/env.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const sqlDir = path.resolve(__dirname, '..', 'sql');
-const dbName = config.db.database || 'stockify';
+const esquema = config.db.schema || 'stockify';
 
 function q(v) {
   if (v === null || v === undefined) return 'NULL';
   if (typeof v === 'number') return String(v);
-  return `'${String(v).replace(/\\/g, '\\\\').replace(/'/g, "''")}'`;
+  return `'${String(v).replace(/'/g, "''")}'`;
 }
 
 async function main() {
@@ -103,29 +103,38 @@ INSERT INTO producto_proveedor (producto_id, proveedor_id) VALUES
 -- suman 100 contra un stock de 80). afecta_stock = 0 significa que el lote solo
 -- etiqueta stock que ya estaba contado.
 INSERT INTO lote (numero_lote, fecha_ingreso, fecha_vencimiento, cantidad_stock, activo, afecta_stock, producto_id) VALUES
-  (${q('L-1001')}, DATE_SUB(CURDATE(), INTERVAL 30 DAY), DATE_SUB(CURDATE(), INTERVAL 5 DAY),   60,  1, 0, 1),
-  (${q('L-1002')}, DATE_SUB(CURDATE(), INTERVAL 30 DAY), DATE_ADD(CURDATE(), INTERVAL 5 DAY),   40,  1, 0, 1),
-  (${q('L-2001')}, DATE_SUB(CURDATE(), INTERVAL 30 DAY), DATE_ADD(CURDATE(), INTERVAL 20 DAY),  20,  1, 0, 2),
-  (${q('L-2002')}, DATE_SUB(CURDATE(), INTERVAL 30 DAY), NULL,                                  25,  1, 0, 2),
-  (${q('L-3001')}, DATE_SUB(CURDATE(), INTERVAL 30 DAY), DATE_ADD(CURDATE(), INTERVAL 180 DAY), 100, 1, 0, 3),
-  (${q('L-4001')}, DATE_SUB(CURDATE(), INTERVAL 30 DAY), DATE_ADD(CURDATE(), INTERVAL 60 DAY),  15,  1, 1, 4);
+  (${q('L-1001')}, CURRENT_DATE - 30, CURRENT_DATE - 5,   60,  1, 0, 1),
+  (${q('L-1002')}, CURRENT_DATE - 30, CURRENT_DATE + 5,   40,  1, 0, 1),
+  (${q('L-2001')}, CURRENT_DATE - 30, CURRENT_DATE + 20,  20,  1, 0, 2),
+  (${q('L-2002')}, CURRENT_DATE - 30, NULL,               25,  1, 0, 2),
+  (${q('L-3001')}, CURRENT_DATE - 30, CURRENT_DATE + 180, 100, 1, 0, 3),
+  (${q('L-4001')}, CURRENT_DATE - 30, CURRENT_DATE + 60,  15,  1, 1, 4);
+
+-- Las filas de arriba traen el id puesto a mano: se adelantan las secuencias.
+SELECT setval(pg_get_serial_sequence('empresa', 'id'),      (SELECT MAX(id) FROM empresa));
+SELECT setval(pg_get_serial_sequence('sucursal', 'id'),     (SELECT MAX(id) FROM sucursal));
+SELECT setval(pg_get_serial_sequence('sucursal_pin', 'id'), (SELECT MAX(id) FROM sucursal_pin));
+SELECT setval(pg_get_serial_sequence('usuario', 'id'),      (SELECT MAX(id) FROM usuario));
+SELECT setval(pg_get_serial_sequence('cliente', 'id'),      (SELECT MAX(id) FROM cliente));
+SELECT setval(pg_get_serial_sequence('categoria', 'id'),    (SELECT MAX(id) FROM categoria));
+SELECT setval(pg_get_serial_sequence('proveedor', 'id'),    (SELECT MAX(id) FROM proveedor));
+SELECT setval(pg_get_serial_sequence('producto', 'id'),     (SELECT MAX(id) FROM producto));
 `.trim();
 
   const out = `-- ============================================================
---  Stockify 2.0 - Dump completo importable (MySQL / MariaDB)
+--  Stockify - Script completo importable (PostgreSQL)
 --  Generado por: npm run db:export
 --
 --  Como importar:
---   * IDE/cliente (HeidiSQL, Workbench, DBeaver, phpMyAdmin):
---       abrir este archivo y ejecutarlo, o "Importar" este .sql.
---   * Consola:  mysql -u root -p < stockify_import.sql
+--   * IDE/cliente (HeidiSQL, DBeaver, pgAdmin): conectate a la base y ejecutá este archivo.
+--   * Consola:  psql -U postgres -d stockify -f stockify_import.sql
 --
---  Crea la base "${dbName}", todas las tablas y datos de ejemplo.
+--  Crea el esquema "${esquema}", todas las tablas y datos de ejemplo.
 --  Usuarios de prueba (contrasenia = "12345"): superadmin / admin / empleado
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS \`${dbName}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE \`${dbName}\`;
+CREATE SCHEMA IF NOT EXISTS "${esquema}";
+SET search_path TO "${esquema}";
 
 ${schema}
 

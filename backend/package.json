@@ -1,19 +1,20 @@
 {
   "name": "stockify-backend",
   "version": "2.0.0",
-  "description": "Stockify backend - facturacion y control de stock - Node.js crudo (http nativo + ws) + MySQL",
+  "description": "Stockify backend - facturacion y control de stock - Node.js crudo (http nativo + ws) + PostgreSQL",
   "type": "module",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
     "db:init": "node scripts/init-db.js",
-    "db:export": "node scripts/export-sql.js"
+    "db:export": "node scripts/export-sql.js",
+    "db:bootstrap": "node scripts/bootstrap.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "mysql2": "^3.11.0",
     "nodemailer": "^10.0.16",
+    "pg": "^8.23.1",
     "ws": "^8.18.0"
   }
 }

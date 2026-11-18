@@ -51,11 +51,11 @@ export const estadisticaVentaService = {
     const [d, h] = rango(desde, hasta);
     const rows = await query(
       `SELECT
-         SUM(estado = 'EMITIDA') AS ventasEmitidas,
+         SUM(CASE WHEN estado = 'EMITIDA' THEN 1 ELSE 0 END) AS ventasEmitidas,
          SUM(CASE WHEN estado = 'EMITIDA' THEN total ELSE 0 END) AS totalFacturado,
          SUM(CASE WHEN estado = 'EMITIDA' AND forma_pago = 'CONTADO' THEN total ELSE 0 END) AS totalContado,
          SUM(CASE WHEN estado = 'EMITIDA' AND forma_pago = 'CREDITO' THEN total ELSE 0 END) AS totalCredito,
-         SUM(estado = 'ANULADA') AS ventasAnuladas,
+         SUM(CASE WHEN estado = 'ANULADA' THEN 1 ELSE 0 END) AS ventasAnuladas,
          SUM(CASE WHEN estado = 'ANULADA' THEN total ELSE 0 END) AS totalAnulado
        FROM venta
       WHERE sucursal_id = ? AND fecha_hora BETWEEN ? AND ?`,

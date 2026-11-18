@@ -57,7 +57,7 @@ function mensaje(row) {
 }
 
 /**
- * Fecha y hora LOCAL del servidor en formato MySQL.
+ * Fecha y hora LOCAL del servidor en formato SQL (YYYY-MM-DD HH:MM:SS).
  * toISOString() devuelve UTC: de noche (UTC-3) adelantaba el conteo al dia
  * siguiente y desaparecia de las busquedas por fecha.
  */

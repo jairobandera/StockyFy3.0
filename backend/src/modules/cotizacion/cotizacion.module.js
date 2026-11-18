@@ -53,7 +53,7 @@ export const cotizacionService = {
       await query(
         `INSERT INTO cotizacion (empresa_id, moneda, compra, venta, actualizado)
          VALUES (?,?,?,?,?)
-         ON DUPLICATE KEY UPDATE compra = VALUES(compra), venta = VALUES(venta), actualizado = VALUES(actualizado)`,
+         ON CONFLICT (empresa_id, moneda) DO UPDATE SET compra = EXCLUDED.compra, venta = EXCLUDED.venta, actualizado = EXCLUDED.actualizado`,
         [empresaId, moneda, compra, venta, nowDateTime()]
       );
     }

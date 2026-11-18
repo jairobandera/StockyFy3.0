@@ -109,20 +109,22 @@ por email** (no usan la facturación ni los clientes de la app). Todo se carga d
 |-------------|-------------------------------------------------------------------|
 | Backend     | **Node.js puro** (módulo `http` nativo, sin Express)              |
 | Tiempo real | **WebSocket nativo** (`ws`) con topics                            |
-| Base datos  | **MySQL / MariaDB** (`mysql2`)                                    |
+| Base datos  | **PostgreSQL** (`pg`), un esquema por negocio                     |
 | Auth        | **JWT** HS256 con el módulo `crypto` nativo · contraseñas `bcryptjs` |
 | Frontend    | **HTML + CSS + JavaScript puro** (SPA con módulos ES, sin build)  |
 
-> Dependencias del backend: `mysql2`, `ws`, `bcryptjs` y **`nodemailer`** (envío de correo SMTP para
+> Dependencias del backend: `pg`, `ws`, `bcryptjs` y **`nodemailer`** (envío de correo SMTP para
 > los estados de cuenta de la quincena).
 > El frontend usa Bootstrap, Bootstrap Icons, Chart.js, SweetAlert2, XLSX y jsPDF vía CDN.
 
 ## Requisitos
 
 - **Node.js** 18 o superior.
-- **MySQL** o **MariaDB** corriendo. La forma más fácil es con **XAMPP**:
-  descargalo, abrí el *Control Panel* y presioná **Start** en **MySQL** (y en Apache si querés
-  phpMyAdmin para administrar la base desde el navegador).
+- **PostgreSQL** 14 o superior corriendo.
+  - **Windows:** instalador oficial en https://www.postgresql.org/download/windows/ (dejá el puerto
+    `5432` y anotá la contraseña que le ponés al usuario `postgres`). Trae **pgAdmin** para ver la base.
+  - Después creá una base vacía llamada `stockify` (en pgAdmin: *Databases → Create → Database*,
+    o en consola: `createdb -U postgres stockify`).
 
 ## Puesta en marcha
 
@@ -131,11 +133,11 @@ por email** (no usan la facturación ni los clientes de la app). Todo se carga d
 cd backend
 npm install
 
-# 2) Configurar la conexión: copiar el ejemplo y ajustar credenciales
-#    (DB_USER / DB_PASS según tu MySQL; en XAMPP suele ser user "root" sin contraseña)
+# 2) Configurar la conexión: copiar el ejemplo y poner la contraseña de tu PostgreSQL
+#    (DB_USER=postgres, DB_PASS=la que elegiste al instalar, DB_NAME=stockify)
 cp .env.example .env          # PowerShell:  Copy-Item .env.example .env
 
-# 3) Crear la base de datos + tablas + datos de ejemplo
+# 3) Crear el esquema + tablas + datos de ejemplo
 npm run db:init
 
 # 4) Levantar el servidor (sirve API + WebSocket + frontend en el mismo puerto)
@@ -181,60 +183,44 @@ para verla). Valores típicos de Gmail: host `smtp.gmail.com`, puerto `465`, seg
 
 ## Base de datos
 
-Hay dos formas de crear la base (su nombre por defecto es **`facturafy`**, configurable en `.env`):
+Stockify usa **PostgreSQL**. Las tablas viven en un **esquema** (`DB_SCHEMA`, por defecto
+`stockify`) dentro de la base `DB_NAME`. Así una misma base puede tener varios negocios, cada uno en
+su esquema (es lo que hace el panel de Kairos en el servidor: `stk_<negocio>`).
 
 ### Opción A — script de inicialización (recomendada)
 
-Con MySQL corriendo y el `.env` configurado:
+Con PostgreSQL corriendo, la base creada y el `.env` configurado:
 
 ```bash
 cd backend
 npm run db:init
 ```
 
-Crea la base `facturafy`, todas las tablas (`backend/sql/schema.sql`) y carga datos de ejemplo.
+Crea el esquema, todas las tablas (`backend/sql/schema.sql`) y carga datos de ejemplo.
 
-> **Ojo:** `schema.sql` **borra** todas las tablas antes de crearlas. Para una base que ya tiene
-> datos, en vez de reinicializar aplicá las migraciones a mano desde `backend/sql/migrations/`, en
-> orden:
-> - `006-facturacion.sql` — paquetes por sucursal + tablas de facturación (clientes, ventas).
-> - `007-turnos-y-anulacion.sql` — turnos de caja.
-> - `008-pines-y-cuenta-corriente.sql` — PINes de anulación, cuenta corriente y límites de crédito.
-> - `009-smtp-por-sucursal.sql` — credenciales de correo por sucursal.
-> - `010-monedas-comentario-vuelto.sql` — cotizaciones de moneda, comentario y vuelto en la venta.
-> - `011-consulta-precio.sql` — flag de consulta de precios (kiosko) por sucursal.
-> - `012-envio-correos.sql` — paquete "Solo envío de correos" (contactos + historial).
-> - `013-stock-decimal.sql` — stock con decimales (`DECIMAL(14,3)`, ej. litros).
-> - `014-import-perfiles.sql` — perfiles de mapeo de columnas para importar Excels.
-> - `015-contacto-direccion.sql` — dirección en los contactos de correo.
-> - `016-contacto-cuenta.sql` — N° de cuenta en los contactos de correo (cruce del estado de cuenta).
-> - `017-promos-y-descuentos.sql` — promociones (precio especial) y códigos de descuento (paquete completo).
-> - `018-suscripciones.sql` — suscripción por empresa (prueba de 7 días + claves de activación).
->
-> ```bash
-> mysql -u <usuario> -p facturafy < backend/sql/migrations/013-stock-decimal.sql
-> mysql -u <usuario> -p facturafy < backend/sql/migrations/014-import-perfiles.sql
-> mysql -u <usuario> -p facturafy < backend/sql/migrations/015-contacto-direccion.sql
-> mysql -u <usuario> -p facturafy < backend/sql/migrations/016-contacto-cuenta.sql
-> mysql -u <usuario> -p facturafy < backend/sql/migrations/017-promos-y-descuentos.sql
-> mysql -u <usuario> -p facturafy < backend/sql/migrations/018-suscripciones.sql
-> ```
+> **Ojo:** `db:init` **borra** las tablas del esquema antes de crearlas. Es para desarrollo y demos.
+> Para un negocio real en el servidor se usa `npm run db:bootstrap`, que solo prepara la base si
+> está vacía (empresa, casa central, superadmin y admin; ver `scripts/bootstrap.js`).
 
-### Opción B — importar un dump SQL desde un IDE / cliente
+### Opción B — importar un script SQL desde un cliente
 
-Si preferís administrar la base con un cliente gráfico (**phpMyAdmin**, **HeidiSQL**,
-**MySQL Workbench**, **DBeaver**), generá un dump autocontenido:
+Si preferís un cliente gráfico (**pgAdmin**, **HeidiSQL**, **DBeaver**), generá el script:
 
 ```bash
 cd backend
 npm run db:export        # genera backend/sql/stockify_import.sql
 ```
 
-El archivo incluye `CREATE DATABASE` + tablas + datos de ejemplo. Importalo:
+El archivo crea el esquema `stockify`, las tablas y los datos de ejemplo. Conectate a la base
+`stockify` y ejecutalo:
 
-- **phpMyAdmin**: pestaña *Importar* → elegí el archivo → *Continuar*.
-- **HeidiSQL / Workbench / DBeaver**: abrí el `.sql` y ejecutalo.
-- **Consola**: `mysql -u root -p < sql/stockify_import.sql`
+- **pgAdmin / HeidiSQL / DBeaver**: abrí el `.sql` y ejecutalo.
+- **Consola**: `psql -U postgres -d stockify -f backend/sql/stockify_import.sql`
+
+### Respaldos
+
+Desde la app (**Administración → Respaldo**) se descarga un JSON con todas las tablas y se puede
+restaurar en cualquier instalación (reemplaza los datos actuales, todo o nada).
 
 ## Estructura del proyecto
 
@@ -243,14 +229,14 @@ Stockify/
 ├── backend/
 │   ├── server.js                 # Punto de entrada (HTTP + WebSocket)
 │   ├── sql/
-│   │   ├── schema.sql            # Esquema MySQL (tablas)
-│   │   ├── migrations/           # Cambios incrementales (006-facturacion.sql, ...)
-│   │   └── stockify_import.sql   # Dump completo importable (generado)
+│   │   ├── schema.sql            # Esquema PostgreSQL (tablas)
+│   │   └── stockify_import.sql   # Script completo importable (generado)
 │   ├── scripts/
-│   │   ├── init-db.js            # Crea BD + tablas + datos semilla  (npm run db:init)
-│   │   └── export-sql.js         # Genera el dump importable         (npm run db:export)
+│   │   ├── init-db.js            # Crea esquema + tablas + datos semilla (npm run db:init)
+│   │   ├── bootstrap.js          # Prepara un negocio nuevo si la base esta vacia (npm run db:bootstrap)
+│   │   └── export-sql.js         # Genera el script importable         (npm run db:export)
 │   └── src/
-│       ├── config/               # env.js, db.js (pool MySQL)
+│       ├── config/               # env.js, db.js (pool PostgreSQL)
 │       ├── core/                 # router, jwt, ws, http, crud genérico, etc.
 │       └── modules/              # un módulo por dominio:
 │                                 #   stock: usuario, producto, lote, conteo, estadistica, ...

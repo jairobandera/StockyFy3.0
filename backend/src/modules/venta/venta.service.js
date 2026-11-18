@@ -14,7 +14,7 @@ function money(n) {
 
 const FORMAS_PAGO = ['CONTADO', 'CREDITO'];
 
-/** Fecha y hora LOCAL del servidor en formato MySQL (igual criterio que conteo.module.js). */
+/** Fecha y hora LOCAL del servidor en formato SQL (YYYY-MM-DD HH:MM:SS) (igual criterio que conteo.module.js). */
 function nowDateTime() {
   const d = new Date();
   const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
