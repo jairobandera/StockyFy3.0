@@ -59,7 +59,7 @@ export function loginPage() {
       ]),
       form,
       h('p', { class: 'text-center text-muted small mt-4 mb-0' },
-        'Usuarios demo: superadmin / admin / empleado / cajero (clave 12345)'),
+        'Usuarios demo: admin / empleado / cajero (clave 12345)'),
     ]),
   ]));
 }
