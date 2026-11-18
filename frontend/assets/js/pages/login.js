@@ -58,8 +58,6 @@ export function loginPage() {
         h('p', { class: 'text-muted mb-0' }, 'Facturación y control de stock'),
       ]),
       form,
-      h('p', { class: 'text-center text-muted small mt-4 mb-0' },
-        'Usuarios demo: admin / empleado / cajero (clave 12345)'),
     ]),
   ]));
 }
